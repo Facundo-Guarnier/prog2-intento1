@@ -1,0 +1,33 @@
+{
+  "guarnierProg2App": {
+    "orden": {
+      "home": {
+        "title": "Ordens",
+        "refreshListLabel": "Atualizar lista",
+        "createLabel": "Criar novo Orden",
+        "createOrEditLabel": "Criar ou editar Orden",
+        "search": "Pesquisar por Orden",
+        "notFound": "Nenhum Orden encontrado"
+      },
+      "created": "Um novo Orden foi criado com o identificador {{ param }}",
+      "updated": "Um Orden foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Orden foi excluído com o identificador {{ param }}",
+      "delete": {
+        "question": "Tem certeza de que deseja excluir Orden {{ id }}?"
+      },
+      "detail": {
+        "title": "Orden"
+      },
+      "id": "ID",
+      "cliente": "Cliente",
+      "accionId": "Accion Id",
+      "accion": "Accion",
+      "operacion": "Operacion",
+      "precio": "Precio",
+      "cantidad": "Cantidad",
+      "fechaOperacion": "Fecha Operacion",
+      "modo": "Modo",
+      "estado": "Estado"
+    }
+  }
+}
