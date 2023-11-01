@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import um.edu.prog2.guarnier.service.ProcesamientoDeOrdenesService;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.*;
 import org.hibernate.annotations.Cache;
@@ -93,17 +95,15 @@ public class Orden implements Serializable {
         //! Condiciones:
         //! 1• Una orden instantánea no puede ejecutarse fuera del horario de transacciones, 
         //!    antes de las 09:00 y después de las 18:00. 
-        if (this.modo == "AHORA" && hora <= 9 || hora > 18) {
-            System.out.println(hora);
+        if ("AHORA".equals(this.modo) && hora <= 9 || hora > 18) {
             log.debug("La hora está fuera del rango de 9:00 AM y 6:00 PM para una orden inmediata. Hora:" + hora);
             return false;
         }
 
+        
         //! 2• Una orden debe tener asociado un cliente y una acción de una compañía. Se debe 
         //!    verificar que el Id de cliente y el Id de la acción sean válidos. Para esto 
         //!    se debe consultar el servicio cátedra buscando por Id de ambos.
-        //!    Apuntar al endpoint http://192.168.194.254:8000/api/clientes/buscar?id=26365
-        //!                        http://192.168.194.254:8000/api/acciones/buscar?id=2
         if (this.cliente == null || this.accionId == null) {
             log.debug("La orden no tiene un cliente o una acción asociada.");
             return false;
@@ -118,36 +118,37 @@ public class Orden implements Serializable {
             JsonNode cliente = clientes.get(0);     // El primer cliente de la lista
             int id = cliente.get("id").asInt();
             if (id != this.cliente) {
-                log.debug("El cliente asociado a la orden no es válido.");
+                log.debug("El cliente asociado a la orden no es válido. Cliente: " + id + " Orden cliente: " + this.cliente);
                 return false;
             }
         } 
         else {
-            log.debug("El cliente asociado a la orden no es válido.");
+            log.debug("El cliente asociado a la orden no es válido. Cliente: " + id + " Orden cliente: " + this.cliente);
             return false;
         }
 
         //! Acción ID
         // String urlAccion = "http://192.168.194.254:8000/api/acciones/buscar?id=" + this.accionId;
-        String urlAccion = "http://192.168.194.254:8000/api/acciones/buscar?empresa=" + this.accion;
+        String urlAccion = "http://192.168.194.254:8000/api/acciones/buscar?codigo=" + this.accion;
         JsonNode respuestaAccion = this.solicitudHTTP(urlAccion);
         JsonNode acciones = respuestaAccion.get("acciones");
+
         if (acciones.isArray() && acciones.size() > 0) {
             JsonNode accion = acciones.get(0);     // La primera acción de la lista
             int id = accion.get("id").asInt();
             if (id != this.accionId) {
-                log.debug("La acción asociada a la orden no es válida.");
+                log.debug("La acción asociada a la orden no es válida. Acción: " + id + " Orden accion: " + this.accionId);
                 return false;
             }
         } 
         else {
-            log.debug("La acción asociada a la orden no es válida.");
+            log.debug("La acción asociada a la orden no es válida. Acción: " + id + " Orden accion: " + this.accionId);
             return false;
         }
 
+
         //! 3• Una orden no puede tener un número de acciones <=0. Para verificar este punto 
         //!    se deberá hacer una consulta a servicios de la cátedra. 
-        //!    Endpoint: http://192.168.194.254:8000/api/acciones/buscar?id=4
         // JsonNode respuesta = this.solicitudHTTP("http://192.168.194.254:8000/api/acciones/buscar?id=4");
         if (this.cantidad <= 0) {
             log.debug("La cantidad de acciones de la orden es menor o igual a 0.");
@@ -156,8 +157,9 @@ public class Orden implements Serializable {
 
 
         //! 4• Revisar los valores del atributo MODO
-        if (this.modo != "AHORA" && this.modo != "FINDIA" && this.modo != "INICIODIA") {
-            log.debug("El modo de la orden no es válido: " + this.modo);
+        // if (this.modo != "AHORA" && this.modo != "FINDIA" && this.modo != "INICIODIA") {
+        if (!"AHORA".equals(this.modo) && !"FINDIA".equals(this.modo) && !"INICIODIA".equals(this.modo)) {
+            log.debug("El modo de la orden no es válido: " + this.modo );
             return false;
         }
 
@@ -185,9 +187,6 @@ public class Orden implements Serializable {
 
         return null;
     }
-
-
-
 
 
 
@@ -362,4 +361,5 @@ public class Orden implements Serializable {
             ", estado='" + getEstado() + "'" +
             "}";
     }
+
 }

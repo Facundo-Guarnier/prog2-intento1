@@ -5,3 +5,9 @@
     Problema: tengo que hacer un "if (cantidad > 0)" pero ¿Qué tiene que ver la consulta a la cátedra?
 
 -   Que funcione el .env
+
+-   ¿Qué hay que hacer cuando se programa una orden?
+
+-   En "ProcesamientoDeOrdenesService" tal vez conviene usar this.orden antes que ordenObj y tener que pasarlo por todas las funciones. tener en cuenta las ordenes programadas que puede pasar.
+
+-   Al hacer las listas de ordenes procesadas y fallidas, ¿tengo que guardar toda la orden on algún ID?
