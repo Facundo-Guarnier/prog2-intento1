@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import um.edu.prog2.guarnier.service.ProcesamientoDeOrdenesService;
+import um.edu.prog2.guarnier.service.SolicitudHTTPService;
+
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,18 +24,18 @@ import javax.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-/**
- * A Orden.
- */
+
 @Entity
 @Table(name = "orden")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "orden")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Orden implements Serializable {
-    
+
+    SolicitudHTTPService solicitudHTTPService = new SolicitudHTTPService();
     private final Logger log = LoggerFactory.getLogger(ProcesamientoDeOrdenesService.class);
     private static final long serialVersionUID = 1L;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
@@ -79,8 +81,8 @@ public class Orden implements Serializable {
         this.precio = (precio != null) ? precio : -1.0f;
         this.cantidad = cantidad;
         this.fechaOperacion = fechaOperacion;
-        this.modo = modo;  //! "AHORA", "FINDIA", "INICIODIA"
-        this.estado = estado;
+        this.modo = modo;  //! "AHORA", "FINDIA", "PRINCIPIODIA"
+        this.estado = estado; //! "FALLIDO", "PROGRAMADO", "COMPLETADO"
     }
 
 
@@ -111,8 +113,10 @@ public class Orden implements Serializable {
 
         //! Cliente ID
         // String urlCliente = "http://192.168.194.254:8000/api/clientes/buscar?id=" + this.cliente;
-        String urlCliente = "http://192.168.194.254:8000/api/clientes/buscar?nombre=" + "Tapia";
-        JsonNode respuestaCliente = this.solicitudHTTP(urlCliente);
+        String urlCliente = "http://192.168.194.254:8000/api/clientes/buscar?nombre=" + "Corvalan";
+        
+        JsonNode respuestaCliente = this.solicitudHTTPService.getConJWT(urlCliente);
+        
         JsonNode clientes = respuestaCliente.get("clientes");
         if (clientes.isArray() && clientes.size() > 0) {
             JsonNode cliente = clientes.get(0);     // El primer cliente de la lista
@@ -130,7 +134,9 @@ public class Orden implements Serializable {
         //! Acción ID
         // String urlAccion = "http://192.168.194.254:8000/api/acciones/buscar?id=" + this.accionId;
         String urlAccion = "http://192.168.194.254:8000/api/acciones/buscar?codigo=" + this.accion;
-        JsonNode respuestaAccion = this.solicitudHTTP(urlAccion);
+        
+        JsonNode respuestaAccion = this.solicitudHTTPService.getConJWT(urlAccion);
+        
         JsonNode acciones = respuestaAccion.get("acciones");
 
         if (acciones.isArray() && acciones.size() > 0) {
@@ -157,8 +163,7 @@ public class Orden implements Serializable {
 
 
         //! 4• Revisar los valores del atributo MODO
-        // if (this.modo != "AHORA" && this.modo != "FINDIA" && this.modo != "INICIODIA") {
-        if (!"AHORA".equals(this.modo) && !"FINDIA".equals(this.modo) && !"INICIODIA".equals(this.modo)) {
+        if (!"AHORA".equals(this.modo) && !"FINDIA".equals(this.modo) && !"PRINCIPIODIA".equals(this.modo)) {
             log.debug("El modo de la orden no es válido: " + this.modo );
             return false;
         }
@@ -166,32 +171,6 @@ public class Orden implements Serializable {
         //! Si todo está bien, devuelve true.
         return true;
     }
-
-
-    private JsonNode solicitudHTTP(String apiUrl) {
-        // String jwtToken = System.getenv("JWT_TOKEN");
-        String jwtToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmYWN1bmRvZ3Vhcm5pZXIiLCJhdXRoIjoiUk9MRV9VU0VSIiwiZXhwIjoxNzI5NzUzNzcyfQ.pklknWchQH_Y8kM8Is-XCfu6hYxWVJJqgg0rNBAH9IisOWKPW1n-jC3Xqecv6HFjwHvWc3nugiaB5gtMaNlShg";
-
-        try {
-            URL url = new URL(apiUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Authorization", "Bearer " + jwtToken);
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode response = objectMapper.readTree(connection.getInputStream());
-            return response;
-
-        } catch (Exception e) {
-            log.error("Error en la solicitud HTTP", e);
-        }
-
-        return null;
-    }
-
-
-
-
-
 
 
     //!-------------------------------------------------------------------

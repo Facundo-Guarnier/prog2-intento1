@@ -28,6 +28,7 @@ public class ProcesamientoDeOrdenesService {
         try{
             JsonNode ordenes = ordenesJson.get("ordenes");
 
+            //TODO ¿Esto se puede hacer con un DTO?
             for (JsonNode orden : ordenes) {
                 int cliente = orden.get("cliente").asInt();
                 int accionId = orden.get("accionId").asInt();
