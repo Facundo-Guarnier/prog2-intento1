@@ -4,5 +4,6 @@
         "FINDIA",
         "INICIODIA",
         "PRINCIPIODIA"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

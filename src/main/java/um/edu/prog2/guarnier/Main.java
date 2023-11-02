@@ -5,8 +5,11 @@ import um.edu.prog2.guarnier.service.ServicioExternoService;
 public class Main {
     public static void main(String[] args) {
         
-        ServicioExternoService servicioExternoService = new ServicioExternoService();
-        servicioExternoService.simularOrdenes();
+        // ServicioExternoService servicioExternoService = new ServicioExternoService();
+        // servicioExternoService.simularOrdenes();
+
+        
+
 
     }
 
