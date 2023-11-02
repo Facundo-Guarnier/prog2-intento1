@@ -58,7 +58,16 @@ public class ProcesamientoDeOrdenesService {
         List<List<Orden>> resultado = new ArrayList<>();
         resultado.add(ordenesProcesadas);
         resultado.add(ordenesFallidas);
+
+        this.reportar(resultado);
+
         return resultado;
+    }
+
+
+    private void reportar(List<List<Orden>> resultado) {
+        ReportarOperacionesService ros = new ReportarOperacionesService();
+        ros.reportarOperaciones(resultado);
     }
 
 

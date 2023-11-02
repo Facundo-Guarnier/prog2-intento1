@@ -13,9 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @Transactional
-public class SolicitudHTTPService {
+public class CatedraAPIService {
 
-    private final Logger log = LoggerFactory.getLogger(SolicitudHTTPService.class);
+    private final Logger log = LoggerFactory.getLogger(CatedraAPIService.class);
 
     public JsonNode get(String apiUrl) {
         try {

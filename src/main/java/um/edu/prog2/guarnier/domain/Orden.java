@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import um.edu.prog2.guarnier.service.ProcesamientoDeOrdenesService;
-import um.edu.prog2.guarnier.service.SolicitudHTTPService;
+import um.edu.prog2.guarnier.service.CatedraAPIService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Orden implements Serializable {
 
-    SolicitudHTTPService solicitudHTTPService = new SolicitudHTTPService();
+    CatedraAPIService cs = new CatedraAPIService();
     private final Logger log = LoggerFactory.getLogger(ProcesamientoDeOrdenesService.class);
     private static final long serialVersionUID = 1L;
 
@@ -115,7 +115,7 @@ public class Orden implements Serializable {
         // String urlCliente = "http://192.168.194.254:8000/api/clientes/buscar?id=" + this.cliente;
         String urlCliente = "http://192.168.194.254:8000/api/clientes/buscar?nombre=" + "Corvalan";
         
-        JsonNode respuestaCliente = this.solicitudHTTPService.getConJWT(urlCliente);
+        JsonNode respuestaCliente = this.cs.getConJWT(urlCliente);
         
         JsonNode clientes = respuestaCliente.get("clientes");
         if (clientes.isArray() && clientes.size() > 0) {
@@ -135,7 +135,7 @@ public class Orden implements Serializable {
         // String urlAccion = "http://192.168.194.254:8000/api/acciones/buscar?id=" + this.accionId;
         String urlAccion = "http://192.168.194.254:8000/api/acciones/buscar?codigo=" + this.accion;
         
-        JsonNode respuestaAccion = this.solicitudHTTPService.getConJWT(urlAccion);
+        JsonNode respuestaAccion = this.cs.getConJWT(urlAccion);
         
         JsonNode acciones = respuestaAccion.get("acciones");
 

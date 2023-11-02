@@ -20,10 +20,10 @@ public class ServicioExternoService {
     public void simularOrdenes() {
         log.debug("Simulando ordenes");
         ProcesamientoDeOrdenesService procesamientoDeOrdenesService = new ProcesamientoDeOrdenesService();
-        SolicitudHTTPService solicitudHTTPService = new SolicitudHTTPService();
+        CatedraAPIService cs = new CatedraAPIService();
 
-        // JsonNode respuestaCliente = solicitudHTTPService.solicitud("https://www.mockachino.com/2e3476f6-949b-42/api/ordenes/ordenes");
-        JsonNode respuestaCliente = solicitudHTTPService.getConJWT("http://192.168.194.254:8000/api/ordenes/ordenes");
+        // JsonNode respuestaCliente = cs.get("https://www.mockachino.com/2e3476f6-949b-42/api/ordenes/ordenes");
+        JsonNode respuestaCliente = cs.getConJWT("http://192.168.194.254:8000/api/ordenes/ordenes");
 
         List<List<Orden>> listas = procesamientoDeOrdenesService.analizarOrdenes(respuestaCliente);
     }
